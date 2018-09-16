@@ -48,6 +48,7 @@ namespace ProjectCreator
             if (!ProjectPathExists)
             {
                 importExcelToolStripMenuItem.Enabled = false;
+                restoreBackupToolStripMenuItem.Enabled = false;
                 createBackupToolStripMenuItem.Enabled = false;
             }
             else
@@ -89,6 +90,7 @@ namespace ProjectCreator
         private void InitDb()
         {
             importExcelToolStripMenuItem.Enabled = true;
+            restoreBackupToolStripMenuItem.Enabled = true;
 
             if (DbExists)
             {
@@ -136,6 +138,34 @@ namespace ProjectCreator
             ZipFile.CreateFromDirectory(DbFolderPath, zipPath);
 
             MessageBox.Show($"Backup has been cretaed in \n{zipPath}");
+        }
+
+        private void restoreBackupToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var dialog = new OpenFileDialog
+            {
+                InitialDirectory = BackupsFolderPath,
+                Filter = "Zip File (*.zip) | *.zip"
+            };
+
+            var result = dialog.ShowDialog();
+
+            if (result == DialogResult.OK)
+            {
+                var tempFolder = $"{Path.GetTempPath()}\\excelRestoreFolder";
+                string tempFile = $"{tempFolder}\\{DB_NAME}";
+
+                Directory.CreateDirectory(tempFolder);
+                ZipFile.ExtractToDirectory(dialog.FileName, tempFolder);
+
+                File.Copy(tempFile, DbPath, true);
+                File.Delete(tempFile);
+                Directory.Delete(tempFolder);
+
+                excelGrid.DataSource = ExcelHandler.GetDataTable(DbPath);
+                createBackupToolStripMenuItem.Enabled = true;
+                MessageBox.Show("Restore Successful");
+            }
         }
     }
 }

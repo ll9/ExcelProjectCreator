@@ -34,6 +34,7 @@
             this.importExcelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.excelGrid = new System.Windows.Forms.DataGridView();
             this.createBackupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.restoreBackupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.excelGrid)).BeginInit();
             this.SuspendLayout();
@@ -53,7 +54,8 @@
             this.menuToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.openProjectToolStripMenuItem,
             this.importExcelToolStripMenuItem,
-            this.createBackupToolStripMenuItem});
+            this.createBackupToolStripMenuItem,
+            this.restoreBackupToolStripMenuItem});
             this.menuToolStripMenuItem.Name = "menuToolStripMenuItem";
             this.menuToolStripMenuItem.Size = new System.Drawing.Size(50, 20);
             this.menuToolStripMenuItem.Text = "Menu";
@@ -87,6 +89,13 @@
             this.createBackupToolStripMenuItem.Text = "Create Backup";
             this.createBackupToolStripMenuItem.Click += new System.EventHandler(this.createBackupToolStripMenuItem_Click);
             // 
+            // restoreBackupToolStripMenuItem
+            // 
+            this.restoreBackupToolStripMenuItem.Name = "restoreBackupToolStripMenuItem";
+            this.restoreBackupToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.restoreBackupToolStripMenuItem.Text = "Restore Backup";
+            this.restoreBackupToolStripMenuItem.Click += new System.EventHandler(this.restoreBackupToolStripMenuItem_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -113,6 +122,7 @@
         private System.Windows.Forms.ToolStripMenuItem importExcelToolStripMenuItem;
         private System.Windows.Forms.DataGridView excelGrid;
         private System.Windows.Forms.ToolStripMenuItem createBackupToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem restoreBackupToolStripMenuItem;
     }
 }
 
