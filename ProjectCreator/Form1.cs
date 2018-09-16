@@ -15,60 +15,58 @@ namespace ProjectCreator
 {
     public partial class Form1 : Form
     {
-        public readonly string DB_PATH = "Db";
+        public readonly string DB_FOLDER = "Db";
         public readonly string DB_NAME = "db.xlsx";
 
-        public string ProjectPath { get; set; }
+        public string ProjectPath => Properties.Settings.Default["DefaultProjectPath"].ToString();
+        public bool ProjectPathExists => string.IsNullOrEmpty(ProjectPath);
+        public string DbFolderPath
+        {
+            get
+            {
+                if (!ProjectPathExists)
+                {
+                    throw new InvalidOperationException("Cannot Get Db Path when Project Path does not exist");
+                }
+                return $"{ProjectPath}\\{DB_FOLDER}";
+            }
+        }
+        private string DbPath => $"{DbFolderPath}\\{DB_NAME}";
+        public bool DbExists => File.Exists(DbPath);
+
 
         public Form1()
         {
             InitializeComponent();
-
+            LoadDefaultProject();
             InitializeProjectPath();
-            if (File.Exists($"{ProjectPath}\\{DB_PATH}\\{DB_NAME}"))
+            if (File.Exists($"{ProjectPath}\\{DB_FOLDER}\\{DB_NAME}"))
             {
                 ReadExcelToDb();
             }
         }
 
-        private void InitializeProjectPath()
+        private void LoadDefaultProject()
         {
-            if (String.IsNullOrEmpty(Properties.Settings.Default["DefaultProjectPath"].ToString()))
+            if (!ProjectPathExists)
             {
                 importExcelToolStripMenuItem.Enabled = false;
             }
             else
             {
-                ProjectPath = Properties.Settings.Default["DefaultProjectPath"].ToString();
-                Debug.WriteLine(Properties.Settings.Default["DefaultProjectPath"].ToString());
+                Directory.CreateDirectory(DbFolderPath);
+                if (DbExists)
+                {
+                    ReadExcelToDb();
+                }
             }
-        }
-
-        private void SelectProjectFolder()
-        {
-            var dialog = new FolderBrowserDialog();
-            dialog.SelectedPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            var result = dialog.ShowDialog();
-
-            Debug.WriteLine(result);
-            Debug.WriteLine(dialog.SelectedPath);
-
-            if (result == DialogResult.OK)
-            {
-                Properties.Settings.Default["DefaultProjectPath"] = dialog.SelectedPath;
-                Properties.Settings.Default.Save();
-                ProjectPath = dialog.SelectedPath;
-                importExcelToolStripMenuItem.Enabled = true;
-                Directory.CreateDirectory($"{ProjectPath}\\{DB_PATH}");
-            }
-
         }
 
         private void ReadExcelToDb()
         {
             // Open the Excel file using ClosedXML.
             // Keep in mind the Excel file cannot be open when trying to read it
-            using (XLWorkbook workBook = new XLWorkbook($"{ProjectPath}\\{DB_PATH}\\{DB_NAME}"))
+            using (XLWorkbook workBook = new XLWorkbook(DbPath))
             {
                 //Read the first Sheet from Excel file.
                 IXLWorksheet workSheet = workBook.Worksheet(1);
@@ -106,6 +104,40 @@ namespace ProjectCreator
             }
         }
 
+        private void InitializeProjectPath()
+        {
+            if (String.IsNullOrEmpty(Properties.Settings.Default["DefaultProjectPath"].ToString()))
+            {
+                importExcelToolStripMenuItem.Enabled = false;
+            }
+            else
+            {
+                ProjectPath = Properties.Settings.Default["DefaultProjectPath"].ToString();
+                Debug.WriteLine(Properties.Settings.Default["DefaultProjectPath"].ToString());
+            }
+        }
+
+        private void SelectProjectFolder()
+        {
+            var dialog = new FolderBrowserDialog();
+            dialog.SelectedPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            var result = dialog.ShowDialog();
+
+            Debug.WriteLine(result);
+            Debug.WriteLine(dialog.SelectedPath);
+
+            if (result == DialogResult.OK)
+            {
+                Properties.Settings.Default["DefaultProjectPath"] = dialog.SelectedPath;
+                Properties.Settings.Default.Save();
+                ProjectPath = dialog.SelectedPath;
+                importExcelToolStripMenuItem.Enabled = true;
+                Directory.CreateDirectory($"{ProjectPath}\\{DB_FOLDER}");
+            }
+
+        }
+
+
         private void ImportExcel()
         {
             var dialog = new OpenFileDialog();
@@ -116,7 +148,7 @@ namespace ProjectCreator
             if (result == DialogResult.OK)
             {
                 Debug.WriteLine(dialog.FileName);
-                System.IO.File.Copy(dialog.FileName, $"{ProjectPath}\\{DB_PATH}\\{DB_NAME}", true);
+                System.IO.File.Copy(dialog.FileName, $"{ProjectPath}\\{DB_FOLDER}\\{DB_NAME}", true);
             }
             ReadExcelToDb();
         }
