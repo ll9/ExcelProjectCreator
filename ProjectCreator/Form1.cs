@@ -15,6 +15,9 @@ namespace ProjectCreator
 {
     public partial class Form1 : Form
     {
+        public readonly string DB_PATH = "Db";
+        public readonly string DB_NAME = "db.xlsx";
+
         public string ProjectPath { get; set; }
 
         public Form1()
@@ -22,7 +25,7 @@ namespace ProjectCreator
             InitializeComponent();
 
             InitializeProjectPath();
-            if (File.Exists($"{ProjectPath}\\Db\\db.xlsx"))
+            if (File.Exists($"{ProjectPath}\\{DB_PATH}\\{DB_NAME}"))
             {
                 ReadExcelToDb();
             }
@@ -39,7 +42,7 @@ namespace ProjectCreator
                 ProjectPath = Properties.Settings.Default["DefaultProjectPath"].ToString();
                 Debug.WriteLine(Properties.Settings.Default["DefaultProjectPath"].ToString());
             }
-            System.IO.Directory.CreateDirectory($"{ProjectPath}\\Db");
+            Directory.CreateDirectory($"{ProjectPath}\\{DB_PATH}");
         }
 
         private void SelectProjectFolder()
@@ -64,7 +67,7 @@ namespace ProjectCreator
         {
             // Open the Excel file using ClosedXML.
             // Keep in mind the Excel file cannot be open when trying to read it
-            using (XLWorkbook workBook = new XLWorkbook($"{ProjectPath}\\Db\\db.xlsx"))
+            using (XLWorkbook workBook = new XLWorkbook($"{ProjectPath}\\{DB_PATH}\\{DB_NAME}"))
             {
                 //Read the first Sheet from Excel file.
                 IXLWorksheet workSheet = workBook.Worksheet(1);
@@ -112,7 +115,7 @@ namespace ProjectCreator
             if (result == DialogResult.OK)
             {
                 Debug.WriteLine(dialog.FileName);
-                System.IO.File.Copy(dialog.FileName, $"{ProjectPath}\\Db\\db.xlsx", true);
+                System.IO.File.Copy(dialog.FileName, $"{ProjectPath}\\{DB_PATH}\\{DB_NAME}", true);
             }
             ReadExcelToDb();
         }
