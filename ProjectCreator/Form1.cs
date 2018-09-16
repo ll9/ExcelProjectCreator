@@ -54,11 +54,7 @@ namespace ProjectCreator
             }
             else
             {
-                Directory.CreateDirectory(DbFolderPath);
-                if (DbExists)
-                {
-                    ReadExcelToDb();
-                }
+                InitDb();
             }
         }
 
@@ -123,20 +119,30 @@ namespace ProjectCreator
             dialog.SelectedPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
             var result = dialog.ShowDialog();
 
-            Debug.WriteLine(result);
-            Debug.WriteLine(dialog.SelectedPath);
 
             if (result == DialogResult.OK)
             {
                 Properties.Settings.Default["DefaultProjectPath"] = dialog.SelectedPath;
                 Properties.Settings.Default.Save();
-                ProjectPath = dialog.SelectedPath;
-                importExcelToolStripMenuItem.Enabled = true;
-                Directory.CreateDirectory($"{ProjectPath}\\{DB_FOLDER}");
+                InitDb();
             }
 
         }
 
+        /// <summary>
+        /// Loads Db If it exists and
+        /// Enables Excel Menu Item
+        /// </summary>
+        private void InitDb()
+        {
+            importExcelToolStripMenuItem.Enabled = true;
+            Directory.CreateDirectory(DbFolderPath);
+
+            if (DbExists)
+            {
+                ReadExcelToDb();
+            }
+        }
 
         private void ImportExcel()
         {
