@@ -69,8 +69,16 @@ namespace ProjectCreator
             {
                 Properties.Settings.Default["DefaultProjectPath"] = dialog.SelectedPath;
                 Properties.Settings.Default.Save();
+                CreateProjectFolders();
                 InitDb();
             }
+
+        }
+
+        private void CreateProjectFolders()
+        {
+            Directory.CreateDirectory(DbFolderPath);
+            Directory.CreateDirectory(BackupsFolderPath);
 
         }
 
@@ -81,7 +89,6 @@ namespace ProjectCreator
         private void InitDb()
         {
             importExcelToolStripMenuItem.Enabled = true;
-            Directory.CreateDirectory(DbFolderPath);
 
             if (DbExists)
             {
@@ -126,7 +133,6 @@ namespace ProjectCreator
         {
             var zipPath = $"{BackupsFolderPath}\\backup-{DateTime.Now.ToString("yyyy-dd-M--HH-mm-ss")}.zip";
 
-            Directory.CreateDirectory(BackupsFolderPath);
             ZipFile.CreateFromDirectory(DbFolderPath, zipPath);
 
             MessageBox.Show($"Backup has been cretaed in \n{zipPath}");
