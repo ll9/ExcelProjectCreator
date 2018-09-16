@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -45,6 +46,7 @@ namespace ProjectCreator
             if (!ProjectPathExists)
             {
                 importExcelToolStripMenuItem.Enabled = false;
+                createBackupToolStripMenuItem.Enabled = false;
             }
             else
             {
@@ -82,6 +84,12 @@ namespace ProjectCreator
             if (DbExists)
             {
                 excelGrid.DataSource = ExcelHandler.GetDataTable(DbPath);
+                createBackupToolStripMenuItem.Enabled = true;
+            }
+            else
+            {
+                excelGrid.DataSource = new DataTable();
+                createBackupToolStripMenuItem.Enabled = false;
             }
         }
 
@@ -96,9 +104,9 @@ namespace ProjectCreator
 
             if (result == DialogResult.OK)
             {
-                Debug.WriteLine(dialog.FileName);
                 File.Copy(dialog.FileName, DbPath, true);
                 excelGrid.DataSource = ExcelHandler.GetDataTable(DbPath);
+                createBackupToolStripMenuItem.Enabled = true;
             }
         }
 
