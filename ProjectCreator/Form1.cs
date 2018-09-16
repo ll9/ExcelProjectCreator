@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -8,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.IO.Compression;
 
 namespace ProjectCreator
 {
@@ -18,6 +20,7 @@ namespace ProjectCreator
 
         public string ProjectPath => Properties.Settings.Default["DefaultProjectPath"].ToString();
         public bool ProjectPathExists => !string.IsNullOrEmpty(ProjectPath);
+        public string BackupsFolderPath => $"{ProjectPath}\\Backups";
         public string DbFolderPath
         {
             get
@@ -45,6 +48,8 @@ namespace ProjectCreator
             if (!ProjectPathExists)
             {
                 importExcelToolStripMenuItem.Enabled = false;
+                restoreBackupToolStripMenuItem.Enabled = false;
+                createBackupToolStripMenuItem.Enabled = false;
             }
             else
             {
@@ -65,8 +70,16 @@ namespace ProjectCreator
             {
                 Properties.Settings.Default["DefaultProjectPath"] = dialog.SelectedPath;
                 Properties.Settings.Default.Save();
+                CreateProjectFolders();
                 InitDb();
             }
+
+        }
+
+        private void CreateProjectFolders()
+        {
+            Directory.CreateDirectory(DbFolderPath);
+            Directory.CreateDirectory(BackupsFolderPath);
 
         }
 
@@ -77,11 +90,17 @@ namespace ProjectCreator
         private void InitDb()
         {
             importExcelToolStripMenuItem.Enabled = true;
-            Directory.CreateDirectory(DbFolderPath);
+            restoreBackupToolStripMenuItem.Enabled = true;
 
             if (DbExists)
             {
                 excelGrid.DataSource = ExcelHandler.GetDataTable(DbPath);
+                createBackupToolStripMenuItem.Enabled = true;
+            }
+            else
+            {
+                excelGrid.DataSource = new DataTable();
+                createBackupToolStripMenuItem.Enabled = false;
             }
         }
 
@@ -96,9 +115,9 @@ namespace ProjectCreator
 
             if (result == DialogResult.OK)
             {
-                Debug.WriteLine(dialog.FileName);
                 File.Copy(dialog.FileName, DbPath, true);
                 excelGrid.DataSource = ExcelHandler.GetDataTable(DbPath);
+                createBackupToolStripMenuItem.Enabled = true;
             }
         }
 
@@ -110,6 +129,43 @@ namespace ProjectCreator
         private void importExcelToolStripMenuItem_Click(object sender, EventArgs e)
         {
             OpenImportExcelDialog();
+        }
+
+        private void createBackupToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var zipPath = $"{BackupsFolderPath}\\backup-{DateTime.Now.ToString("yyyy-dd-M--HH-mm-ss")}.zip";
+
+            ZipFile.CreateFromDirectory(DbFolderPath, zipPath);
+
+            MessageBox.Show($"Backup has been cretaed in \n{zipPath}");
+        }
+
+        private void restoreBackupToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var dialog = new OpenFileDialog
+            {
+                InitialDirectory = BackupsFolderPath,
+                Filter = "Zip File (*.zip) | *.zip"
+            };
+
+            var result = dialog.ShowDialog();
+
+            if (result == DialogResult.OK)
+            {
+                var tempFolder = $"{Path.GetTempPath()}\\excelRestoreFolder";
+                string tempFile = $"{tempFolder}\\{DB_NAME}";
+
+                Directory.CreateDirectory(tempFolder);
+                ZipFile.ExtractToDirectory(dialog.FileName, tempFolder);
+
+                File.Copy(tempFile, DbPath, true);
+                File.Delete(tempFile);
+                Directory.Delete(tempFolder);
+
+                excelGrid.DataSource = ExcelHandler.GetDataTable(DbPath);
+                createBackupToolStripMenuItem.Enabled = true;
+                MessageBox.Show("Restore Successful");
+            }
         }
     }
 }
