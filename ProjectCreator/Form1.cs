@@ -35,14 +35,13 @@ namespace ProjectCreator
         {
             if (String.IsNullOrEmpty(Properties.Settings.Default["DefaultProjectPath"].ToString()))
             {
-                SelectProjectFolder();
+                importExcelToolStripMenuItem.Enabled = false;
             }
             else
             {
                 ProjectPath = Properties.Settings.Default["DefaultProjectPath"].ToString();
                 Debug.WriteLine(Properties.Settings.Default["DefaultProjectPath"].ToString());
             }
-            Directory.CreateDirectory($"{ProjectPath}\\{DB_PATH}");
         }
 
         private void SelectProjectFolder()
@@ -59,6 +58,8 @@ namespace ProjectCreator
                 Properties.Settings.Default["DefaultProjectPath"] = dialog.SelectedPath;
                 Properties.Settings.Default.Save();
                 ProjectPath = dialog.SelectedPath;
+                importExcelToolStripMenuItem.Enabled = true;
+                Directory.CreateDirectory($"{ProjectPath}\\{DB_PATH}");
             }
 
         }
