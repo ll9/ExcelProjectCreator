@@ -85,6 +85,7 @@
             this.createBackupToolStripMenuItem.Name = "createBackupToolStripMenuItem";
             this.createBackupToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.createBackupToolStripMenuItem.Text = "Create Backup";
+            this.createBackupToolStripMenuItem.Click += new System.EventHandler(this.createBackupToolStripMenuItem_Click);
             // 
             // Form1
             // 

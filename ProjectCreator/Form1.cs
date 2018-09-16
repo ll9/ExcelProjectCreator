@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.IO.Compression;
 
 namespace ProjectCreator
 {
@@ -19,6 +20,7 @@ namespace ProjectCreator
 
         public string ProjectPath => Properties.Settings.Default["DefaultProjectPath"].ToString();
         public bool ProjectPathExists => !string.IsNullOrEmpty(ProjectPath);
+        public string BackupsFolderPath => $"{ProjectPath}\\Backups";
         public string DbFolderPath
         {
             get
@@ -118,6 +120,16 @@ namespace ProjectCreator
         private void importExcelToolStripMenuItem_Click(object sender, EventArgs e)
         {
             OpenImportExcelDialog();
+        }
+
+        private void createBackupToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var zipPath = $"{BackupsFolderPath}\\backup-{DateTime.Now.ToString("yyyy-dd-M--HH-mm-ss")}.zip";
+
+            Directory.CreateDirectory(BackupsFolderPath);
+            ZipFile.CreateFromDirectory(DbFolderPath, zipPath);
+
+            MessageBox.Show($"Backup has been cretaed in \n{zipPath}");
         }
     }
 }
