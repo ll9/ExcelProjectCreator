@@ -32,7 +32,9 @@
             this.menuToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openProjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.importExcelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.excelGrid = new System.Windows.Forms.DataGridView();
             this.menuStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.excelGrid)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -68,17 +70,27 @@
             this.importExcelToolStripMenuItem.Text = "Import Excel";
             this.importExcelToolStripMenuItem.Click += new System.EventHandler(this.importExcelToolStripMenuItem_Click);
             // 
+            // excelGrid
+            // 
+            this.excelGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.excelGrid.Location = new System.Drawing.Point(27, 62);
+            this.excelGrid.Name = "excelGrid";
+            this.excelGrid.Size = new System.Drawing.Size(506, 294);
+            this.excelGrid.TabIndex = 1;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.excelGrid);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
             this.Text = "Form1";
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.excelGrid)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -90,6 +102,7 @@
         private System.Windows.Forms.ToolStripMenuItem menuToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openProjectToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem importExcelToolStripMenuItem;
+        private System.Windows.Forms.DataGridView excelGrid;
     }
 }
 
