@@ -19,7 +19,7 @@ namespace ProjectCreator
         public readonly string DB_NAME = "db.xlsx";
 
         public string ProjectPath => Properties.Settings.Default["DefaultProjectPath"].ToString();
-        public bool ProjectPathExists => string.IsNullOrEmpty(ProjectPath);
+        public bool ProjectPathExists => !string.IsNullOrEmpty(ProjectPath);
         public string DbFolderPath
         {
             get
@@ -98,8 +98,10 @@ namespace ProjectCreator
 
         private void SelectProjectFolder()
         {
-            var dialog = new FolderBrowserDialog();
-            dialog.SelectedPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            var dialog = new FolderBrowserDialog
+            {
+                SelectedPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop)
+            };
             var result = dialog.ShowDialog();
 
 
