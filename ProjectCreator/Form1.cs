@@ -38,15 +38,11 @@ namespace ProjectCreator
         public Form1()
         {
             InitializeComponent();
-            LoadDefaultProject();
-            InitializeProjectPath();
-            if (File.Exists($"{ProjectPath}\\{DB_FOLDER}\\{DB_NAME}"))
-            {
-                ReadExcelToDb();
-            }
+
+            InitializeProject();
         }
 
-        private void LoadDefaultProject()
+        private void InitializeProject()
         {
             if (!ProjectPathExists)
             {
@@ -100,19 +96,6 @@ namespace ProjectCreator
             }
         }
 
-        private void InitializeProjectPath()
-        {
-            if (String.IsNullOrEmpty(Properties.Settings.Default["DefaultProjectPath"].ToString()))
-            {
-                importExcelToolStripMenuItem.Enabled = false;
-            }
-            else
-            {
-                ProjectPath = Properties.Settings.Default["DefaultProjectPath"].ToString();
-                Debug.WriteLine(Properties.Settings.Default["DefaultProjectPath"].ToString());
-            }
-        }
-
         private void SelectProjectFolder()
         {
             var dialog = new FolderBrowserDialog();
@@ -130,7 +113,7 @@ namespace ProjectCreator
         }
 
         /// <summary>
-        /// Loads Db If it exists and
+        /// Loads Db to Datagrid If it exists and
         /// Enables Excel Menu Item
         /// </summary>
         private void InitDb()
@@ -146,17 +129,19 @@ namespace ProjectCreator
 
         private void ImportExcel()
         {
-            var dialog = new OpenFileDialog();
-            dialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            dialog.Filter = "Excel (*.xlsx) | *.xlsx";
+            var dialog = new OpenFileDialog
+            {
+                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
+                Filter = "Excel (*.xlsx) | *.xlsx"
+            };
             var result = dialog.ShowDialog();
 
             if (result == DialogResult.OK)
             {
                 Debug.WriteLine(dialog.FileName);
-                System.IO.File.Copy(dialog.FileName, $"{ProjectPath}\\{DB_FOLDER}\\{DB_NAME}", true);
+                File.Copy(dialog.FileName, DbPath, true);
+                ReadExcelToDb();
             }
-            ReadExcelToDb();
         }
 
         private void openProjectToolStripMenuItem_Click(object sender, EventArgs e)
